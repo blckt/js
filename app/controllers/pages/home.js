@@ -4,7 +4,7 @@ exports.view = {
     description: 'Returns the home page',
     auth: {
         mode: 'try',
-        strategy: 'standard'
+        strategy: 'jwt'
     },
     plugins: {
         'hapi-auth-cookie': {

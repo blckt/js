@@ -5,7 +5,8 @@
   <p class="u-text-center">Enter your details to sign into your account</p>
   <div class="form-narrow">
     {{> flash}}
-    <form action='' method='post'>
+  
+    <form action='/login' method='post'>
       <label for="username">Username</label>
       <input class="u-full-width" type="text" id="name" name="username" required="true" tabindex=2 autocorrect="off" autocapitalize="off" autofocus/>
       <label for="password">Password</label>
@@ -16,5 +17,13 @@
       </p>
       {{> form_security}}
     </form>
+
+    <script>
+        var form = document.querySelector('form');
+        form.onsubmit=function(e){
+         // e.preventDefault();
+          console.log(e);
+        }
+    </script>
   </div>
 </div>

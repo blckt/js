@@ -1,31 +1,23 @@
 'use strict';
 
-exports.register = function(plugin, options, next) {
+exports.register = function (plugin, options, next) {
 
-    let Controllers = {
-        auth: {
-            login: require('../controllers/auth/login'),
-            logout: require('../controllers/auth/logout')
-        }
-    };
-
-    plugin.route([
-
-        // Auth Routes
+    const auth = require('../controllers/auth').auth;
+    plugin.route([{
+        method: 'POST',
+        path: '/login',
+        config: auth.login.config
+    },
+        {
+            method: 'POST',
+            path: '/register',
+            config: auth.register.config
+        },
         {
             method: 'GET',
-            path: '/login',
-            config: Controllers.auth.login.showForm
-        }, {
-            method: 'POST',
-            path: '/login',
-            config: Controllers.auth.login.postForm
-        }, {
-            method: '*',
-            path: '/logout',
-            config: Controllers.auth.logout
-        }
-    ]);
+            path: '/ping',
+            config: auth.ping.config
+        }]);
 
     next();
 };

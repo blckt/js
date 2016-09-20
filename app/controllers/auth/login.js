@@ -8,18 +8,15 @@ exports.showForm = {
     description: 'Returns the login page',
     auth: {
         mode: 'try',
-        strategy: 'standard'
+        strategy: 'jwt'
     },
-    plugins: {
-        'hapi-auth-cookie': {
-            redirectTo: false // To prevent redirect loop
-        }
-    },
-    handler: function(request, reply) {
+ 
+    handler: function (request, reply) {
 
         if (request.auth.isAuthenticated) {
             return reply.redirect('/account');
         }
+        console.log('after view')
         reply.view('auth/login');
 
     }
@@ -27,53 +24,36 @@ exports.showForm = {
 
 exports.postForm = {
     description: 'Post to the login page',
-    auth: {
-        mode: 'try',
-        strategy: 'standard'
-    },
-    plugins: {
-        'hapi-auth-cookie': {
-            redirectTo: false
-        },
-        crumb: {
-            key: 'crumb',
-            source: 'payload',
-            restful: true
-        }
-    },
     validate: {
         payload: {
             username: Joi.string().min(3).max(20),
             password: Joi.string().min(6).max(20)
-        },
-        failAction: function(request, reply, source, error) {
-
-            // Username, passowrd minimum validation failed
-            request.yar.flash('error', 'Invalid username or password');
-            return reply.redirect('/login');
         }
     },
-    handler: function(request, reply) {
+    auth:false,
+    handler: function (request, reply) {
+        console.log('SHIT HAPPEND');
+        reply({ x: 1 })
+        // if (request.auth.isAuthenticated) {
+        //     return reply.redirect('/account');
+        // }
 
-        if (request.auth.isAuthenticated) {
-            return reply.redirect('/account');
-        }
+        // User.findByCredentials(request.payload.username, request.payload.password, function (err, user, msg) {
+        //     if (err) {
+        //         // Boom bad implementation
+        //         request.yar.flash('error', 'An internal server error occurred');
+        //         return reply.redirect('/login');
+        //     }
 
-        User.findByCredentials(request.payload.username, request.payload.password, function(err, user, msg) {
-            if (err) {
-                // Boom bad implementation
-                request.yar.flash('error', 'An internal server error occurred');
-                return reply.redirect('/login');
-            }
-            if (user) {
-                request.cookieAuth.set(user);
-                return reply.redirect('/account');
-            } else {
-                // User not fond in database
-                request.yar.flash('error', 'Invalid username or password');
-                return reply.redirect('/login');
-            }
-        });
+        //     if (user) {
+        //         request.cookieAuth.set(user);
+        //         return reply.redirect('/account');
+        //     } else {
+        //         // User not fond in database
+        //         request.yar.flash('error', 'Invalid username or password');
+        //         return reply.redirect('/login');
+        //     }
+        // });
 
     }
 };

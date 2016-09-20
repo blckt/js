@@ -29,11 +29,38 @@ internals.manifest = {
         labels: ['web']
     }],
     registrations: [
-
+        //  MongoDB connector 
+        {
+            plugin: {
+                register: './lib/mongoose',
+                options: Config.get('/mongoose')
+            }
+        },
         // Cookie authentication
         {
-            plugin: 'hapi-auth-cookie'
+            plugin: 'hapi-auth-jwt2'
         },
+        {
+            plugin: {
+                register: 'good',
+                options: {
+                    ops: {
+                        interval: 1000
+                    },
+                    reporters: {
+                        consoleReporter: [{
+                            module: 'good-squeeze',
+                            name: 'Squeeze',
+                            args: [{ log: '*', response: '*' }]
+                        },
+                            {
+                                module: 'good-console'
+                            }, 'stdout'],
+                    }
+                }
+            }
+        }
+        ,
 
         //  Crumb
         {
@@ -72,13 +99,7 @@ internals.manifest = {
             }
         },
 
-        //  MongoDB connector 
-        {
-            plugin: {
-                register: './lib/mongoose',
-                options: Config.get('/mongoose')
-            }
-        },
+
 
         // Flash Plugin
         {
@@ -94,15 +115,6 @@ internals.manifest = {
                 options: Config.get('/yarCookie')
             }
         },
-
-        //  Authentication strategy
-        {
-            plugin: {
-                register: './lib/auth',
-                options: Config.get('/authCookie')
-            }
-        },
-
         //  App context decorator
         {
             plugin: {
@@ -113,6 +125,13 @@ internals.manifest = {
             }
         },
 
+        //  Authentication strategy
+        {
+            plugin: {
+                register: './lib/auth',
+                options: Config.get('/authCookie')
+            }
+        },
         //  Core routes
         {
             plugin: './app/routes/core.js'
@@ -132,9 +151,9 @@ internals.manifest = {
 
 internals.store = new Confidence.Store(internals.manifest);
 
-exports.get = function(key) {
+exports.get = function (key) {
     return internals.store.get(key, internals.criteria);
 };
-exports.meta = function(key) {
+exports.meta = function (key) {
     return internals.store.meta(key, internals.criteria);
 };
